@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mall.dubbo.dao.CourceDao">
+	<resultMap type="com.mall.dubbo.entity.Cource" id="courceMap">
+		<id property="id" column="id" javaType="int" jdbcType="INTEGER"/>
+		<result property="courceName" column="cource_name" javaType="String" jdbcType="VARCHAR"/>
+		<result property="teacherId" column="teacher_id" javaType="int" jdbcType="INTEGER"/>
+	</resultMap>
+	
+	<parameterMap type="com.mall.dubbo.entity.Cource" id="paraMap">
+		<parameter property="id"/>
+		<parameter property="courceName"/>
+		<parameter property="teacherId"/>
+	</parameterMap>
+	
+	<sql id="courceSql">id,cource_name,teacher_id</sql>
+	
+	<select id="selectAll" resultMap="courceMap">
+		select <include refid="courceSql"/> from cource
+	</select>
+	
+	<select id="selectById" parameterType="int" resultMap="courceMap">
+		select <include refid="courceSql"/> from cource where
+			id=#{id,javaType=int,jdbcType=INTEGER}
+	</select>
+	
+	<insert id="addCource" parameterMap="paraMap">
+		insert into cource (<include refid="courceSql"/>) values(
+			#{id,javaType=int,jdbcType=INTEGER},
+			#{courceName,javaType=String,jdbcType=VARCHAR},
+			#{teacherId,javaType=int,jdbcType=INTEGER}
+		)
+	</insert>
+	
+	<update id="updateCourceById" parameterType="com.mall.dubbo.entity.Cource">
+		update cource set
+			cource_name=#{courceName,javaType=String,jdbcType=VARCHAR},
+			teacher_id=#{teacherId,javaType=int,jdbcType=INTEGER}
+		where id=#{id,javaType=int,jdbcType=INTEGER}
+	</update>
+	
+	<delete id="deleteCourceById" parameterType="int">
+		delete from cource where id=#{id,javaType=int,jdbcType=INTEGER}
+	</delete>
+	<delete id="deleteAll">
+		delete from cource
+	</delete>
+</mapper>

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mall.dubbo.dao.TeacherDao">
+	<resultMap type="com.mall.dubbo.entity.Teacher" id="TeacherMap">
+		<id property="id" column="id" javaType="int" jdbcType="INTEGER" />
+		<result property="teacherName" column="teacher_name" javaType="String"
+			jdbcType="VARCHAR" />
+		<result property="age" column="age" javaType="int" jdbcType="INTEGER" />
+		<result property="sex" column="sex" javaType="int" jdbcType="INTEGER" />
+		<!-- 方法一 -->
+		<!-- 使用这种方式，coulumn的名字不能重复，否则识别不了 -->
+		<association property="cource" javaType="com.mall.dubbo.entity.Cource">
+			<id property="id" column="cource_id" javaType="int" jdbcType="INTEGER" />
+			<result property="courceName" column="cource_name" javaType="String"
+				jdbcType="VARCHAR" />
+			<result property="teacherId" column="c_teacher_id" javaType="int"
+				jdbcType="INTEGER" />
+		</association>
+		<!-- 方法二 -->
+		<!-- <association property="cource" javaType="com.mall.dubbo.entity.Cource" 
+			resultMap="courceMap"/> -->
+		<!-- 方法三 -->
+		<association property="cource" javaType="com.mall.dubbo.entity.Cource" 
+			column="teacher_id" select="selectCourceById"/>
+
+		<!-- 方法一 -->
+		<!-- 使用这种方式，coulumn的名字不能重复，否则识别不了 -->
+		<collection property="students" ofType="com.mall.dubbo.entity.Student">
+			<id property="id" column="student_id" javaType="int" jdbcType="INTEGER" />
+			<result property="age" column="s_age" javaType="int" jdbcType="INTEGER" />
+			<result property="studentName" column="student_name" javaType="String"
+				jdbcType="VARCHAR" />
+			<result property="sex" column="s_sex" javaType="int" jdbcType="INTEGER" />
+			<result property="teacherId" column="s_teacher_id" javaType="int"
+				jdbcType="INTEGER" />
+		</collection>
+		<!-- 方法二 -->
+		<!-- <collection property="students" ofType="com.mall.dubbo.entity.Student" 
+			resultMap="studentMap"/> -->
+		<!-- 方法三 -->
+		<!-- <collection property="students" ofType="com.mall.dubbo.entity.Student" 
+			column="teacher_id" select="selectStudentByTeacherId"/> -->
+	</resultMap>
+
+	<!-- 对应于方法二 -->
+	<!-- <resultMap type="com.mall.dubbo.entity.Cource" id="courceMap"> <id 
+		property="id" column="cource_id" javaType="int" jdbcType="INTEGER"/> 
+		<result property="courceName" column="cource_name" javaType="String" jdbcType="VARCHAR"/> 
+		<result property="teacherId"  column="c_teacher_id" javaType="int" jdbcType="INTEGER"/> 
+	</resultMap> -->
+	<!-- 对应于方法二 -->
+	<!-- <resultMap type="com.mall.dubbo.entity.Student" id="studentMap"> <id 
+		property="id" column="student_id" javaType="int" jdbcType="INTEGER"/> 
+		<result property="age" column="s_age" javaType="int" jdbcType="INTEGER"/>
+		<result property="studentName" column="student_name" javaType="String" jdbcType="VARCHAR"/> 
+		<result property="sex" column="s_sex" javaType="int" jdbcType="INTEGER"/>
+		<result property="teacherId" column="s_teacher_id" javaType="int" jdbcType="INTEGER"/> 
+	</resultMap> -->
+	<parameterMap type="com.mall.dubbo.entity.Teacher" id="paraMap">
+		<parameter property="id" />
+		<parameter property="teacherName" />
+		<parameter property="age" />
+		<parameter property="sex" />
+	</parameterMap>
+	<sql id="teacherSql">id,teacher_name,age,sex</sql>
+	<!-- 对应于方法三 -->
+	<!-- <select id="selectCourceByTeacherId" parameterType="int" resultType="com.mall.dubbo.entity.Cource"> 
+		select * from cource where teacher_id=#{id,javaType=int,jdbcType=INTEGER} 
+	</select>
+	<select id="selectStudentByTeacherId" parameterType="int" resultType="com.mall.dubbo.entity.Student"> 
+		select * from student where teacher_id=#{id,javaType=int,jdbcType=INTEGER} 
+	</select> -->
+	<select id="selectTeacerById" parameterType="int" resultMap="TeacherMap">
+		select t.*,s.id student_id,s.age s_age,s.sex s_sex,s.teacher_id s_teacher_id,s.student_name,
+		c.id cource_id,c.cource_name,c.teacher_id c_teacher_id
+		from teacher t join cource c on t.id=c.teacher_id left outer join student
+		s on t.id=s.teacher_id
+		where t.id=#{id,javaType=int,jdbcType=INTEGER}
+	</select>
+	<!-- <select id="selectTeacerById" parameterType="int" resultMap="TeacherMap">
+		select * from teacher where id=#{id,javaType=int,jdbcType=INTEGER}
+	</select> -->
+	<select id="selectAll" resultMap="TeacherMap">
+		select t.*,s.id student_id,s.age s_age,s.sex s_sex,s.teacher_id s_teacher_id,s.student_name,
+		c.id cource_id,c.cource_name,c.teacher_id c_teacher_id
+		from teacher t join cource c on t.id=c.teacher_id left outer join student
+		s on t.id=s.teacher_id
+	</select>
+	<insert id="addTeacher" parameterMap="paraMap">
+		insert into teacher(
+		<include refid="teacherSql" />
+		)values(
+		#{id,javaType=int,jdbcType=INTEGER},
+		#{teacherName,javaType=String,jdbcType=VARCHAR},
+		#{age,javaType=int,jdbcType=INTEGER},
+		#{sex,javaType=int,jdbcType=INTEGER}
+		)
+	</insert>
+</mapper>
