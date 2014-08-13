@@ -13,4 +13,7 @@ public interface CourceDao extends GenericDao {
 	public abstract Cource selectById(int id);
 	
 	public abstract void updateCourceById(Cource cource);
+	
+	public abstract void addCourecs();
+	public abstract String selectName();
 }

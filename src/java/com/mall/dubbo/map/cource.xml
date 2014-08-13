@@ -31,8 +31,17 @@
 			#{teacherId,javaType=int,jdbcType=INTEGER}
 		)
 	</insert>
+	<!-- 通过statementType="CALLABLE"设置为存储过程和函数 -->
+	<!-- 该查询为调用存储过程 -->
+	<select id="addCourecs" statementType="CALLABLE">
+		call addCources()
+	</select>
+	<!-- 该查询为调用函数 -->
+	<select id="selectName" statementType="CALLABLE" resultType="java.lang.String">
+		select test1()
+	</select>
 	
-	<update id="updateCourceById" parameterType="com.mall.dubbo.entity.Cource">
+	<update id="updateCourceById" parameterType="com.mall.dubbo.entity.Cource" >
 		update cource set
 			cource_name=#{courceName,javaType=String,jdbcType=VARCHAR},
 			teacher_id=#{teacherId,javaType=int,jdbcType=INTEGER}

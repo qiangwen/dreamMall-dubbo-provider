@@ -34,7 +34,7 @@ public class CourceTest {
 		System.out.println(c);
 	}
 	
-	@Test
+	//@Test
 	public void updateCourceById(){
 		Cource cource = new Cource();
 		cource.setCourceName("France");
@@ -42,5 +42,19 @@ public class CourceTest {
 		cource.setTeacherId(2);
 		CourceDao dao = context.getBean(CourceDao.class);
 		dao.updateCourceById(cource);
+	}
+	
+	//@Test
+	public void addCources(){
+		CourceDao dao = context.getBean(CourceDao.class);
+		dao.addCourecs();
+	}
+	
+	@Test
+	public void selectName(){
+		CourceDao dao = context.getBean(CourceDao.class);
+		String str = dao.selectName();
+		System.out.println("//////////////"+str);
+		
 	}
 }
